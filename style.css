@@ -378,4 +378,8 @@ footer>i {
     .line-items {
         padding: 0;
     }
+
+    .content header>i {
+        padding: 6px 15px;
+    }
 }
