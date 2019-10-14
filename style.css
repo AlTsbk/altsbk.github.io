@@ -16,7 +16,7 @@ body {
     height: 100%;
 }
 
- /*scroll bar*/
+/*scroll bar*/
 
 ::-webkit-scrollbar {
     width: 10px;
@@ -49,15 +49,47 @@ body {
     height: 50px;
     border-bottom: #ececec solid 1px;
     text-align: center;
-    padding: 5px;
+    padding-top: 5px;
     color: #636a72;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
+.sidebar>header>i {
+    position:absolute;
+    padding: 0 5px;
+}
+
+.sidebar form {
+    border: 1px solid #ececec;
+    display: inline-block;
+    position: relative;
+    width: 290px;
+    margin: 2px 5px;
+    margin-top: 10px;
+}
+
 .sidebar input {
     width: 100%;
+    padding:3px;
+    background-color: transparent;
+    border: 0;
+}
+
+.sidebar button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    background-color: transparent;
+    border: 0;
+    color: #636a72;
+    padding: 3px 5px;
+    
+}
+
+.sidebar button:last-child{
+    padding-right: 30px;
 }
 
 .orders {
@@ -177,7 +209,7 @@ body {
     padding: 30px 0px;
 }
 
-.order-info-block{
+.order-info-block {
     height: 119px;
 }
 
@@ -294,16 +326,17 @@ body {
     flex-grow: 3;
     color: #2f3b47;
 }
-.contact-inf-mobile span:first-child{
+
+.contact-inf-mobile span:first-child {
     color: #636a72;
 }
 
-.contact-inf-mobile{
+.contact-inf-mobile {
     display: none;
     line-height: 20px;
 }
 
-.contact-inf-mobile p{
+.contact-inf-mobile p {
     padding: 5px 0;
 }
 
@@ -345,11 +378,11 @@ body {
     padding: 0 10px;
 }
 
-.line-items-mobile{
+.line-items-mobile {
     display: none;
 }
 
-.product-item{
+.product-item {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -420,22 +453,22 @@ footer>i {
         padding: 0;
     }
 
-    .contact-inf{
+    .contact-inf {
         display: none;
     }
 
-    .contact-inf-mobile{
+    .contact-inf-mobile {
         display: flex;
         flex-direction: column;
         height: 100%;
         padding: 15px;
     }
 
-    .line-items table{
+    .line-items table {
         display: none;
     }
 
-    .line-items-mobile{
+    .line-items-mobile {
         display: block;
     }
 }
