@@ -257,9 +257,7 @@ body {
 
 .shipping-addres {
     background-color: #ffffff;
-    min-height: 190px;
-    height: 200px;
-    padding: 15px 15px 0px;
+    padding: 15px 15px 15px;
     border-bottom: 2px solid #dbe0e6;
 }
 
@@ -295,6 +293,18 @@ body {
     flex-direction: column;
     flex-grow: 3;
     color: #2f3b47;
+}
+.contact-inf-mobile span:first-child{
+    color: #636a72;
+}
+
+.contact-inf-mobile{
+    display: none;
+    line-height: 20px;
+}
+
+.contact-inf-mobile p{
+    padding: 5px 0;
 }
 
 /*end of Shipping Addres*/
@@ -385,5 +395,16 @@ footer>i {
 
     .line-items {
         padding: 0;
+    }
+
+    .contact-inf{
+        display: none;
+    }
+
+    .contact-inf-mobile{
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        padding: 15px;
     }
 }
