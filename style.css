@@ -16,6 +16,8 @@ body {
     height: 100%;
 }
 
+ /*scroll bar*/
+
 ::-webkit-scrollbar {
     width: 10px;
 }
@@ -24,6 +26,8 @@ body {
     height: 50px;
     background-color: #b3b3b3;
 }
+
+/*end of scroll bar*/
 
 .container {
     display: flex;
@@ -171,6 +175,10 @@ body {
     flex-direction: column;
     justify-content: flex-start;
     padding: 30px 0px;
+}
+
+.order-info-block{
+    height: 119px;
 }
 
 .order-info-customer,
@@ -377,9 +385,5 @@ footer>i {
 
     .line-items {
         padding: 0;
-    }
-
-    .content header>i {
-        padding: 6px 15px;
     }
 }
