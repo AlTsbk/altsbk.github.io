@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="style.css">
     <script src="https://use.fontawesome.com/8e5e3ed411.js"></script>
-    <title>Document</title>
+    <title>HW 1</title>
 </head>
 
 <body>
@@ -18,7 +18,7 @@
                 <form action="" method="post" class="search">
                     <input type="search" name="" placeholder="поиск" class="input" />
                     <button type="submit"><i class="fa fa-refresh" aria-hidden="true"></i></button>
-                    <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>                   
+                    <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
                 </form>
             </header>
             <div class="orders">
@@ -29,7 +29,7 @@
                     <p class="order-in-time">In time</p>
                     <p class="shiped-date">Shipped: 26 sep. 2016</p>
                 </div>
-                <div class="order-item">
+                <div class="order-item order-item-active">
                     <p class="order-number">Order 7991</p>
                     <p class="order-date">21.11.2016</p>
                     <p class="customer-name">Tortuga Restaurante</p>
@@ -139,6 +139,40 @@
                         <p class="order-info-currency">EUR</p>
                     </div>
                 </div>
+                <div class="processor-information">
+                    <div class="heading">
+                        <p>Processor Information</p>
+                    </div>
+                    <div class="processor-inf-content">
+                        <div class="details">
+                            <p>Details</p>
+                            <div class="details-inf">
+                                <div>
+                                    <p>Name: </p>
+                                    <p>Employee ID: </p>
+                                    <p>Job Title: </p>
+                                    <p>Phone: </p>
+                                </div>
+                                <div>
+                                    <p class="details-name">Jack Smith</p>
+                                    <p class="employee-id">7424</p>
+                                    <p class="job-title">Developer</p>
+                                    <p class="phone">01781162487</p>
+                                </div>
+                            </div>
+                            <div class="details-inf-mobile">
+                                <p><span>Name:</span><br> <span class="details-name">Jack Smith</span></p>
+                                <p><span>Employee ID:</span><br> <span class="employee-id">7424</span></p>
+                                <p><span>Job Title:</span><br> <span class="job-title">Developer</span></p>
+                                <p><span>Phone: </span><br> <span class="phone">01781162487</span></p>
+                            </div>
+                        </div>
+                        <div class="picture">
+                            <p>Picture</p>
+                            <img class="user-photo" src="./img/user-photo.jpg" alt="">
+                        </div>
+                    </div>
+                </div>
                 <div class="shipping-addres">
                     <div class="heading">
                         <p>Shipping Addres</p>
@@ -235,6 +269,7 @@
             </footer>
         </div>
     </div>
+    <script src="./script.js"></script>
 </body>
 
 </html>

@@ -57,9 +57,12 @@ body {
 }
 
 .sidebar>header>i {
-    position:absolute;
+    position: absolute;
     padding: 0 5px;
+    cursor: pointer;
 }
+
+/*search form*/
 
 .sidebar form {
     border: 1px solid #ececec;
@@ -72,7 +75,8 @@ body {
 
 .sidebar input {
     width: 100%;
-    padding:3px;
+    padding: 3px;
+    padding-right: 50px;
     background-color: transparent;
     border: 0;
 }
@@ -85,12 +89,14 @@ body {
     border: 0;
     color: #636a72;
     padding: 3px 5px;
-    
+    cursor: pointer;
 }
 
-.sidebar button:last-child{
+.sidebar button:last-child {
     padding-right: 30px;
 }
+
+/*orders list*/
 
 .orders {
     overflow-y: auto;
@@ -108,6 +114,13 @@ body {
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.order-item-active {
+    background-color: #e8eff7;
 }
 
 .order-item:hover {
@@ -120,9 +133,16 @@ body {
 
 }
 
+.order-item p {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
 .order-number {
     font-size: 18px;
     color: #2f3e51;
+    width: 120px;
 }
 
 .order-date {
@@ -148,7 +168,6 @@ body {
     flex-grow: 2;
     color: #636a72;
 }
-
 
 /*content*/
 
@@ -191,8 +210,6 @@ body {
 .order-info {
     background-color: #eff4f8;
     border-bottom: #d1dfea 2px solid;
-    min-height: 230px;
-    max-height: 230px;
     display: flex;
     padding: 0 30px;
 }
@@ -202,15 +219,16 @@ body {
 .left-order-info {
     width: 100%;
     height: 100%;
-    display: flex;
+    max-width: 700px;
     flex-grow: 6;
-    flex-direction: column;
     justify-content: flex-start;
-    padding: 30px 0px;
+    padding: 30px 0px 0px;
+    text-overflow: ellipsis;
+    margin-bottom: -2px;
 }
 
 .order-info-block {
-    height: 119px;
+    max-width: 700px;
 }
 
 .order-info-customer,
@@ -246,15 +264,13 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
+    color: #447cab;
 }
 
-.shipping-address-icon {
+.active-icon>div:first-child {
     background-color: #447cab;
     color: #fff;
-}
-
-.processor-inf-icon {
-    color: #447cab;
 }
 
 .active-icon {
@@ -264,7 +280,6 @@ body {
 
 .icon-container {
     margin-right: 25px;
-    ;
 }
 
 /*Right part of order info*/
@@ -283,7 +298,69 @@ body {
     font-size: 22px;
 }
 
-/*end of order info*/
+/*Processor Information*/
+
+.processor-information{
+    background-color: #ffffff;
+    padding: 15px 15px 30px;
+    border-bottom: 2px solid #dbe0e6;
+    display: none;
+}
+
+.processor-inf-content{
+    padding: 0px 15px;
+    display: flex;
+    color: #2f3e51;
+}
+
+.details, .picture{
+    flex-grow: 1;
+}
+
+.processor-inf-content>div>p:first-child{
+    padding: 15px 0px;
+    font-size: 15px;
+}
+
+
+.details-inf{
+    display: flex;
+    padding-left: 15px;
+    line-height: 20px;
+}
+
+.details-inf div:first-child{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding-right: 10px;
+    color: #636a72;
+}
+
+.details-inf p {
+    padding-bottom: 3px;
+}
+
+.user-photo{
+    width: 150px;
+}
+
+.phone{
+    color: #1E90FF;
+}
+
+.details-inf-mobile{
+    display: none;
+    line-height: 20px;
+}
+
+.details-inf-mobile span:first-child {
+    color: #636a72;
+}
+
+.details-inf-mobile p {
+    padding: 5px 0;
+}
 
 /*Shipping Addres*/
 
@@ -340,7 +417,7 @@ body {
     padding: 5px 0;
 }
 
-/*end of Shipping Addres*/
+/*line items*/
 
 .line-items {
     height: 100%;
@@ -425,6 +502,7 @@ footer {
 footer>i {
     padding-right: 15px;
     color: #fff;
+    cursor: pointer;
 }
 
 /*media queries*/
@@ -447,6 +525,22 @@ footer>i {
 
     .shipping-addres {
         padding: 0;
+    }
+
+    .processor-information{
+        padding: 0 0 15px;
+    }
+
+    .processor-inf-content{
+        flex-direction: column;
+    }
+
+    .details-inf{
+        display: none;
+    }
+
+    .details-inf-mobile{
+        display: block;
     }
 
     .line-items {
