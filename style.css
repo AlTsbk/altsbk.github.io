@@ -159,9 +159,8 @@ body {
     color: #dc9641;
 }
 
-.order-in-time {
+.order-status {
     text-align: right;
-    color: #008000;
 }
 
 .shiped-date {
@@ -211,6 +210,7 @@ body {
     background-color: #eff4f8;
     border-bottom: #d1dfea 2px solid;
     display: flex;
+    justify-content: space-between;
     padding: 0 30px;
 }
 
@@ -353,11 +353,11 @@ body {
     line-height: 20px;
 }
 
-.details-inf-mobile span:first-child {
+.details-inf-mobile p:first-child {
     color: #636a72;
 }
 
-.details-inf-mobile p {
+.details-inf-mobile div {
     padding: 5px 0;
 }
 
@@ -394,6 +394,7 @@ body {
     padding-right: 10px;
     color: #636a72;
     flex-grow: 1;
+    max-width: 200px;
 }
 
 .contact-inf div:last-child {
@@ -403,11 +404,11 @@ body {
     color: #2f3b47;
 }
 
-.contact-inf-mobile span:first-child {
+.contact-inf-mobile p:first-child {
     color: #636a72;
 }
 
-.contact-inf-mobile span:last-child{
+.contact-inf-mobile p:last-child{
     color: #2f3b47;
 }
 
@@ -416,7 +417,7 @@ body {
     line-height: 20px;
 }
 
-.contact-inf-mobile p {
+.contact-inf-mobile div {
     padding: 5px 0;
 }
 
