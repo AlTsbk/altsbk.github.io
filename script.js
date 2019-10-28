@@ -150,6 +150,10 @@ var Orders = [{
 
 function renderingOrder() {
     const ordersSection = document.querySelector('.orders');
+    const countOrders = document.querySelector('.count-orders');
+    
+    ordersSection.innerHTML = '';
+    
     Orders.forEach((order) => {
         const orderItem = document.createElement('div');
         orderItem.classList.add('order-item');
@@ -162,13 +166,14 @@ function renderingOrder() {
         orderStatusColor(orderItem.querySelector('.order-status'));
         ordersSection.appendChild(orderItem);
     });
+
     ordersSection.firstElementChild.classList.add('order-item-active');
+    countOrders.textContent = `Orders (${ordersSection.childNodes.length})`;
+    chooseOrderItem();
 }
 
 // change order status color
 function orderStatusColor(orderStatus) {
-    console.log(orderStatus.textContent);
-
     switch (orderStatus.textContent) {
         case 'Pending':
             orderStatus.style.color = 'orange';
@@ -190,7 +195,6 @@ function switchTabsInOrder() {
     const processorInformation = document.querySelector('.processor-information');
     const shippingAddressIcon = document.querySelector('.shipping-address-icon');
     const processorInfIcon = document.querySelector('.processor-inf-icon');
-
 
     shippingAddressIcon.addEventListener('click', () => {
         processorInformation.style.display = 'none';
@@ -253,17 +257,12 @@ function renderInformation(order) {
     const country = document.querySelectorAll('.country');
 
     //details filds
-    const detailsName = document.querySelectorAll('.details-name');
-    const employeeId = document.querySelectorAll('.employee-id');
-    const jobTitle = document.querySelectorAll('.job-title');
+    const customerName = document.querySelectorAll('.customer-name');
+    const customerAddres = document.querySelectorAll('.customer-addres');
     const phone = document.querySelectorAll('.phone');
+    const customerEmail = document.querySelectorAll('.customer-email');
 
-    //line items filds
-    const tableContent = document.querySelector('.table-content');
-    const countItems = document.querySelector('.count-items');
-    const lineItemsMobile = document.querySelector('.line-items-mobile');
     //render order info
-
     orderInfoNumber.textContent = `Order ${order.id}`;
     orderInfoCustomer.textContent = `Customer: ${order.OrderInfo.customer}`;
     orderInfoOrdered.textContent = `Ordered: ${order.OrderInfo.createdAt}`;
@@ -272,43 +271,60 @@ function renderInformation(order) {
     orderInfoCurrency.textContent = order.products[0].currency;
 
     //render shipping addres
-    name.forEach((n) => {
-        n.textContent = order.ShipTo.name;
+    name.forEach((e) => {
+        e.textContent = order.ShipTo.name;
     });
-    address.forEach((a) => {
-        a.textContent = order.ShipTo.Address;
+    address.forEach((e) => {
+        e.textContent = order.ShipTo.Address;
     });
-    zipCode.forEach((z) => {
-        z.textContent = order.ShipTo.ZIP;
+    zipCode.forEach((e) => {
+        e.textContent = order.ShipTo.ZIP;
     });
-    region.forEach((r) => {
-        r.textContent = order.ShipTo.Region;
+    region.forEach((e) => {
+        e.textContent = order.ShipTo.Region;
     });
-    country.forEach((c) => {
-        c.textContent = order.ShipTo.Country;
+    country.forEach((e) => {
+        e.textContent = order.ShipTo.Country;
     });
 
     //render details
-    detailsName.forEach((d) => {
-        d.textContent = order.CustomerInfo.firstName + ' ' + order.CustomerInfo.lastName;
+    customerName.forEach((e) => {
+        e.textContent = order.CustomerInfo.firstName + ' ' + order.CustomerInfo.lastName;
+    });
+    customerAddres.forEach((e) => {
+        e.textContent = order.CustomerInfo.address;
+    });
+    phone.forEach((e) => {
+        e.textContent = order.CustomerInfo.phone;
+    });
+    customerEmail.forEach((e) => {
+        e.textContent = order.CustomerInfo.email;
     });
 
     //render table
-    countItems.textContent = `Line Items(${order.products.length})`
+    renderTable(order.products);
+}
+
+//render table
+function renderTable(products) {
+    const tableContent = document.querySelector('.table-content');
+    const countItems = document.querySelector('.count-items');
+    const lineItemsMobile = document.querySelector('.line-items-mobile');
+
+    countItems.textContent = `Line Items(${products.length})`
 
     tableContent.innerHTML = '';
     lineItemsMobile.innerHTML = '<p>Product</p>';
-    order.products.forEach((product) => {
+    products.forEach((product) => {
         const row = document.createElement('tr');
-        row.innerHTML = `<td data-label="Product" class="product"><b>${product.name}</b><p>${product.id}</p></td>
-                         <td data-label="Unit Price" calss="unit-price"><b>${product.price}</b> ${product.currency}</td>
-                         <td data-label="Quantity" class="quantity">${product.quantity}</td>
-                         <td data-label="Total" class="total"><b>${product.totalPrice}</b> ${product.currency}</td>`;
+        row.innerHTML = `<td class="product"><b>${product.name}</b><p>${product.id}</p></td>
+                         <td class="unit-price"><b>${product.price}</b> ${product.currency}</td>
+                         <td class="quantity">${product.quantity}</td>
+                         <td class="total"><b>${product.totalPrice}</b> ${product.currency}</td>`;
 
         tableContent.appendChild(row);
 
         //render mobile version of line items
-
         const productItem = document.createElement('div');
         productItem.classList.add('product-item');
         productItem.innerHTML = `<div>
@@ -327,15 +343,185 @@ function renderInformation(order) {
                                     <p class="total">Total:</p>
                                     <p><b>${product.totalPrice}</b> ${product.currency}</p>
                                  </div>`
+
         lineItemsMobile.appendChild(productItem);
     });
+}
 
+//sort table
 
+function sortTable() {
+    const ascProductSort = document.querySelector('.asc-product-sort');
+    const descProductSort = document.querySelector('.desc-product-sort');
+    const ascUnitPriceSort = document.querySelector('.asc-unit-price-sort');
+    const descUnitPriceSort = document.querySelector('.desc-unit-price-sort');
+    const ascTotalPriceSort = document.querySelector('.asc-total-price-sort');
+    const descTotalPriceSort = document.querySelector('.desc-total-price-sort');
 
+    //sort by name a-z
+    ascProductSort.addEventListener('click', () => {
+        const products = Array.prototype.slice.call(document.querySelectorAll('.table-content tr'));
+        ascProductSort.style.display = 'none';
+        descProductSort.style.display = 'block';
 
+        products.sort((a, b) => {
+            if (a.querySelector('.product>b').textContent > b.querySelector('.product>b').textContent) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
+
+        renderSortedTabe(products);
+    });
+
+    //sort by name z-a
+    descProductSort.addEventListener('click', () => {
+        const products = Array.prototype.slice.call(document.querySelectorAll('.table-content tr'));
+        descProductSort.style.display = 'none';
+        ascProductSort.style.display = 'block';
+
+        products.sort((a, b) => {
+            if (a.querySelector('.product>b').textContent < b.querySelector('.product>b').textContent) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
+
+        renderSortedTabe(products);
+    });
+
+    //sort by unit price ascending 
+    ascUnitPriceSort.addEventListener('click', () => {
+        const products = Array.prototype.slice.call(document.querySelectorAll('.table-content tr'));
+        ascUnitPriceSort.style.display = 'none';
+        descUnitPriceSort.style.display = 'block';
+
+        products.sort((a, b) => {
+            if (+a.querySelector('.unit-price>b').textContent > +b.querySelector('.unit-price>b').textContent) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
+
+        renderSortedTabe(products);
+    });
+
+    //sort by unit price descending
+    descUnitPriceSort.addEventListener('click', () => {
+        const products = Array.prototype.slice.call(document.querySelectorAll('.table-content tr'));
+        descUnitPriceSort.style.display = 'none';
+        ascUnitPriceSort.style.display = 'block';
+
+        products.sort((a, b) => {
+            if (+a.querySelector('.unit-price>b').textContent < +b.querySelector('.unit-price>b').textContent) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
+
+        renderSortedTabe(products);
+    });
+
+    //sort by total price ascending
+    ascTotalPriceSort.addEventListener('click', () => {
+        const products = Array.prototype.slice.call(document.querySelectorAll('.table-content tr'));
+        ascTotalPriceSort.style.display = 'none';
+        descTotalPriceSort.style.display = 'block';
+
+        products.sort((a, b) => {
+            if (+a.querySelector('.total>b').textContent > +b.querySelector('.total>b').textContent) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
+
+        renderSortedTabe(products);
+    });
+
+    //sort by total price descending
+    descTotalPriceSort.addEventListener('click', () => {
+        const products = Array.prototype.slice.call(document.querySelectorAll('.table-content tr'));
+        descTotalPriceSort.style.display = 'none';
+        ascTotalPriceSort.style.display = 'block';
+
+        products.sort((a, b) => {
+            if (+a.querySelector('.total>b').textContent < +b.querySelector('.total>b').textContent) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
+
+        renderSortedTabe(products);
+    });
+}
+
+// render sorted table
+function renderSortedTabe(products) {
+    const tableContent = document.querySelector('.table-content');
+    products.forEach((product) => {
+        tableContent.appendChild(product);
+    });
+}
+
+//search order
+function searchOrders() {
+    const searchOrder = document.querySelector('.order-search');
+    const orderItems = document.querySelectorAll('.order-item');
+    const searchBtn = document.querySelector('.search-btn');
+    const refreshBtn = document.querySelector('.refresh-btn');
+
+    searchBtn.addEventListener('click', () => {
+        if (searchOrder.value != null) {
+            orderItems.forEach((item) => {
+                const searchText = new RegExp(searchOrder.value.trim(), 'i');
+                item.style.display = 'none';
+                item.childNodes.forEach((child) => {
+                    if (searchText.test(child.textContent)) {
+                        item.style.display = '';
+                    }
+                });
+            });
+        }
+    });
+
+    refreshBtn.addEventListener('click', () => {
+        searchOrder.value = '';
+        renderingOrder();
+    });
+}
+
+//search product
+function searchProduct() {
+    const searchProduct = document.querySelector('.product-search');
+    const searchBtn = document.querySelector('.table-search-btn');
+
+    searchBtn.addEventListener('click', () => {
+        if (searchProduct.value != null) {
+            const products = Array.prototype.slice.call(document.querySelectorAll('.table-content tr'));
+            const searchText = new RegExp(searchProduct.value.trim(), 'i');
+
+            products.forEach((product) => {
+                product.style.display = 'none';
+                product.childNodes.forEach((child) => {
+                    if (searchText.test(child.textContent)) {
+                        product.style.display = '';
+                    }
+                });
+            });
+            
+        }
+    });
 }
 
 renderingOrder();
 switchTabsInOrder();
-chooseOrderItem();
 renderInformation(Orders[0]);
+searchOrders();
+sortTable();
+searchProduct();

@@ -10,17 +10,17 @@
 </head>
 
 <body>
-    <div class="container">
+    <di class="container">
         <aside class="sidebar">
             <!--header for orders-->
             <header>
                 <i class="fa fa-chevron-left" aria-hidden="true"></i>
-                <p>Orders (10)</p>
+                <p class="count-orders"></p>
                 <!--search form-->
-                <form action="" method="post" class="search">
-                    <input type="search" name="" placeholder="поиск" class="input" />
-                    <button type="submit"><i class="fa fa-refresh" aria-hidden="true"></i></button>
-                    <button type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                <form>
+                    <input type="search" placeholder="поиск" class="order-search" />
+                    <div class="btn refresh-btn"><i class="fa fa-refresh" aria-hidden="true"></i></div>
+                    <div class="btn search-btn"><i class="fa fa-search" aria-hidden="true"></i></div>
                 </form>
             </header>
             <!--section orders-->
@@ -45,10 +45,10 @@
                 <div class="order-info">
                     <div class="left-order-info">
                         <div class="order-info-block">
-                            <p class="order-info-number">Order 7991</p>
-                            <p class="order-info-customer">Customer: Tortuga Restaurante</p>
-                            <p class="order-info-ordered">Ordered: 18 sep 2016</p>
-                            <p class="order-info-shiped">Shiped: 26 sep 2016</p>
+                            <p class="order-info-number"></p>
+                            <p class="order-info-customer"></p>
+                            <p class="order-info-ordered"></p>
+                            <p class="order-info-shiped"></p>
                         </div>
                         <div class="icons">
                             <div class="icon-container active-icon">
@@ -72,7 +72,7 @@
                 <!--start of processor information block-->
                 <div class="processor-information">
                     <div class="heading">
-                        <p>Processor Information</p>
+                        <p>Customer Information</p>
                     </div>
                     <div class="processor-inf-content">
                         <div class="details">
@@ -81,34 +81,34 @@
                             <div class="details-inf">
                                 <div>
                                     <p>Name: </p>
-                                    <p>Employee ID: </p>
-                                    <p>Job Title: </p>
+                                    <p>Addres: </p>
                                     <p>Phone: </p>
+                                    <p>Email: </p>
                                 </div>
                                 <div>
-                                    <p class="details-name">Jack Smith</p>
-                                    <p class="employee-id">7424</p>
-                                    <p class="job-title">Developer</p>
-                                    <p class="phone">01781162487</p>
+                                    <p class="customer-name"></p>
+                                    <p class="customer-addres"></p>
+                                    <p class="phone"></p>
+                                    <p class="customer-email"></p>
                                 </div>
                             </div>
                             <!--details information for desktop-->
                             <div class="details-inf-mobile">
                                 <div>
                                     <p>Name: </p>
-                                    <p class="details-name">Jack Smith</p>
+                                    <p class="customer-name"></p>
                                 </div>
                                 <div>
-                                    <p>Employee ID: </p>
-                                    <p class="employee-id">7424</p>
-                                </div>
-                                <div>
-                                    <p>Job Title: </p>
-                                    <p class="job-title">Developer</p>
+                                    <p>Addres: </p>
+                                    <p class="customer-addres"></p>
                                 </div>
                                 <div>
                                     <p>Phone: </p>
-                                    <p class="phone">01781162487</p>
+                                    <p class="phone"></p>
+                                </div>
+                                <div>
+                                    <p>Email: </p>
+                                    <p class="customer-email"></p>
                                 </div>
                             </div>
                         </div>
@@ -168,18 +168,60 @@
                 <!--end of shipping addres block-->
                 <!--start of line items block-->
                 <div class="line-items">
-                    <p class="count-items">Line Items(4)</p>
+                    <div class="line-items-header">
+                        <p class="count-items">Line Items(4)</p>
+                        <form>
+                            <input type="search" placeholder="поиск" class="product-search" />
+                            <div class="btn table-search-btn"><i class="fa fa-search" aria-hidden="true"></i></div>
+                        </form>
+                    </div>
                     <!--line items for mobile-->
                     <div class="line-items-mobile">
-                        
+
                     </div>
                     <!--line items for desktop-->
-                    <table class = "line-items-table">
+                    <table class="line-items-table">
                         <tr>
-                            <th>Product</th>
-                            <th>Unit Price</th>
-                            <th>Quantity</th>
-                            <th>Total</th>
+                            <th>
+                                <div>
+                                    <p>Product</p>
+                                    <div class="asc-product-sort">
+                                        <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="desc-product-sort">
+                                        <i class="fa fa-sort-alpha-desc" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+
+                            </th>
+                            <th>
+                                <div>
+                                    <p>Unit Price</p>
+                                    <div class="asc-unit-price-sort">
+                                        <i class="fa fa-sort-amount-asc" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="desc-unit-price-sort">
+                                        <i class="fa fa-sort-amount-desc" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+
+                            </th>
+                            <th>
+                                <div>
+                                    <p>Quantity</p>
+                                </div>
+                            </th>
+                            <th>
+                                <div>
+                                    <p>Total</p>
+                                    <div class="asc-total-price-sort">
+                                        <i class="fa fa-sort-amount-asc" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="desc-total-price-sort">
+                                        <i class="fa fa-sort-amount-desc" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+                            </th>
                         </tr>
                         <tbody class="table-content">
 
@@ -193,9 +235,9 @@
                 <i class="fa fa-envelope-o" aria-hidden="true"></i>
             </footer>
         </div>
-    </div>
-    <!--connect js file-->
-    <script src="./script.js"></script>
+        </div>
+        <!--connect js file-->
+        <script src="./script.js"></script>
 </body>
 
 </html>

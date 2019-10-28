@@ -62,7 +62,7 @@ body {
     cursor: pointer;
 }
 
-/*search form*/
+/*searchOrder form*/
 
 .sidebar form {
     border: 1px solid #ececec;
@@ -81,7 +81,7 @@ body {
     border: 0;
 }
 
-.sidebar button {
+.sidebar .btn {
     position: absolute;
     right: 0;
     top: 0;
@@ -92,8 +92,8 @@ body {
     cursor: pointer;
 }
 
-.sidebar button:last-child {
-    padding-right: 30px;
+.sidebar .btn:last-child {
+    margin-right: 30px;
 }
 
 /*orders list*/
@@ -309,11 +309,13 @@ body {
 .processor-inf-content{
     padding: 0px 15px;
     display: flex;
+    justify-content: space-between;
     color: #2f3e51;
 }
 
 .details, .picture{
     flex-grow: 1;
+    max-width: 400px;
 }
 
 .processor-inf-content>div>p:first-child{
@@ -431,7 +433,42 @@ body {
     flex-direction: column;
 }
 
-.line-items>p {
+.line-items-header{
+    display: flex;
+    justify-content: space-between;
+}
+
+.line-items-header form{
+    border: 1px solid #ececec;
+    background-color: #fff;
+    display: inline-block;
+    position: relative;
+    width: 200px;
+    margin: 2px 5px;
+    margin-top: 10px;
+    height: 20px;
+}
+
+.line-items-header input{
+    width: 100%;
+    padding: 2px;
+    padding-right: 25px;
+    background-color: transparent;
+    border: 0;
+}
+
+.line-items-header .btn{
+    position: absolute;
+    right: 0;
+    top: 0;
+    background-color: transparent;
+    border: 0;
+    color: #636a72;
+    padding: 2px 5px;
+    cursor: pointer;
+}
+
+.line-items-header>p {
     font-size: 18px;
     color: #2f3e51;
     padding: 10px 15px;
@@ -443,6 +480,16 @@ body {
     color: #2f3b47;
 }
 
+.line-items table i {
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.desc-product-sort, .desc-unit-price-sort, .asc-total-price-sort{
+    display: none;
+}
+
+
 .line-items th {
     background-color: #f7f7f7;
     border-top: 1px solid #cdcdcd;
@@ -450,6 +497,16 @@ body {
     font-weight: normal;
     text-align: right;
     padding: 5px 10px;
+}
+
+.line-items th>div:first-child{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.line-items th:first-child>div:first-child{
+    display: flex;
+    justify-content: flex-start;
 }
 
 .line-items td {
@@ -475,7 +532,7 @@ body {
     line-height: 20px;
 }
 
-.line-items>div>p:first-child {
+.line-items-mobile>p:first-child {
     background-color: #f6f6f5;
     border-bottom: 1px solid #e4e4e3;
     border-top: 1px solid #e4e4e3;
