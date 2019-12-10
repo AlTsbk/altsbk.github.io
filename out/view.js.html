@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: view.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: view.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import EventEmitter from "./eventEmitter.js";
+
+/**
+ * class view
+ */
+class View extends EventEmitter {
+    constructor() {
+        super();
+    }
+
+    /**
+     * renders orders items on sidebar
+     * 
+     * @param {Object[]} orders - orders for render
+     */
+    renderOrderItems(orders) {
+        const ordersSection = document.querySelector(".orders");
+        const countOrders = document.querySelector(".js-count-orders");
+        countOrders.textContent = `Orders (${orders.length})`;
+
+        if (orders.length > 0) {
+            ordersSection.innerHTML = "";
+
+            orders.forEach((order) => {
+                const orderItem = document.createElement("div");
+                orderItem.classList.add("order-item");
+                orderItem.innerHTML = `&lt;p class="order-number">Order ${order.id}&lt;/p>
+                                   &lt;p class="order-date">${order.summary.createdAt.slice(0,10)}&lt;/p>
+                                   &lt;p class="customer-name">${order.summary.customer}&lt;/p>
+                                   &lt;p class="order-status">${order.summary.status}&lt;/p>
+                                   &lt;p class="shiped-date">Shipped: ${order.summary.shippedAt}&lt;/p>`;
+
+                this.orderStatusColor(orderItem.querySelector(".order-status"));
+                ordersSection.appendChild(orderItem);
+                this.chooseOrderItemEvent();
+            });
+
+        } else {
+            const message = document.createElement("div");
+            message.innerHTML = `&lt;p class="no-orders-text">no orders&lt;/p>`;
+            message.classList.add("no-orders-message");
+            ordersSection.innerHTML = "";
+            ordersSection.appendChild(message);
+        }
+    }
+
+    /**
+     * chooses color of order status
+     * 
+     * @param {string} orderStatus - order status 
+     */
+    orderStatusColor(orderStatus) {
+        switch (orderStatus.textContent.toLowerCase()) {
+            case "pending":
+                orderStatus.classList.add("pending-status");
+                break;
+            case "too late":
+                orderStatus.classList.add("too-late-status");
+                break;
+            default:
+                orderStatus.classList.add("accept-status");
+                break;
+        }
+    }
+
+    /**
+     * renders order info
+     * 
+     * @param {Object[]} orders - orders
+     */
+    renderOrder(orders) {
+        const information = document.querySelector(".information");
+        const noOrderInfo = document.querySelector(".no-order-info");
+
+        if (orders.length > 0) {
+            const urlAddress = document.location.hash;
+            const orderItemsId = document.querySelectorAll(".order-number");
+
+            information.style.display = "block";
+            noOrderInfo.style.display = "none";
+
+            if (urlAddress.slice(1) != "") {
+
+                let orderExist = false;
+
+                orderItemsId.forEach(orderItemId => {
+                    if (orderItemId.textContent.slice(6) == urlAddress.slice(1)) {
+                        orderItemId.parentNode.classList.add("order-item-active");
+                    }
+                });
+
+                orders.forEach(order => {
+                    if (order.id == urlAddress.slice(1)) {
+                        this.renderInformation(order);
+                        orderExist = true;
+                    }
+                });
+
+                if (!orderExist) {
+                    this.showNotFoundPage(urlAddress.slice(1));
+                }
+
+            } else {
+                this.renderInformation(orders[0]);
+                orderItemsId[0].parentNode.classList.add("order-item-active");
+                document.location.hash = `#${orders[0].id}`;
+            }
+        } else {
+            information.style.display = "none";
+            noOrderInfo.style.display = "flex";
+        }
+    }
+
+    /**
+     * shows "not found page"
+     * 
+     * @param {string} orderId - order id 
+     */
+    showNotFoundPage(orderId) {
+        const notFoundPage = document.querySelector(".not-found-page");
+        const content = document.querySelector(".container");
+        const notFoundOrder = document.querySelector(".not-found-order");
+
+        content.style.display = "none";
+        notFoundPage.style.display = "flex";
+        notFoundOrder.textContent = `Order ${orderId} does not exist`;
+    }
+
+    /**
+     * renders information about order
+     * 
+     * @param {object} order - order for render 
+     */
+    renderInformation(order) {
+        //render order info
+        this.renderOrderInfo(order);
+
+        //render shipping address
+        this.renderShippingAddress(order)
+
+        //render details
+        this.renderDetails(order);
+
+        //render table
+        this.renderLineItems(order.products);
+    }
+
+    /**
+     * renders part "Order Info"
+     * 
+     * @param {order} order - order for render
+     */
+    renderOrderInfo(order) {
+        const orderInfoNumber = document.querySelector(".order-info-number");
+        const orderInfoCustomer = document.querySelector(".order-info-customer");
+        const orderInfoOrdered = document.querySelector(".order-info-ordered");
+        const orderInfoShiped = document.querySelector(".order-info-shiped");
+        const orderInfoPrice = document.querySelector(".order-info-price");
+        const orderInfoCurrency = document.querySelector(".order-info-currency");
+        let orderPrice = 0;
+        if (order.products.length > 0) {
+            orderPrice = order.products.map((product) => {
+                return +product.totalPrice;
+            }).reduce((sum, current) => {
+                return sum + current;
+            });
+        }
+
+        orderInfoNumber.textContent = `Order ${order.id}`;
+        orderInfoCustomer.textContent = `Customer: ${order.summary.customer}`;
+        orderInfoOrdered.textContent = `Ordered: ${order.summary.createdAt}`;
+        orderInfoShiped.textContent = `Shipped: ${order.summary.shippedAt}`;
+        orderInfoPrice.textContent = orderPrice;
+        if (order.products.length > 0) {
+            orderInfoCurrency.textContent = order.products[0].currency;
+        }
+    }
+
+    /**
+     * renders part "Shipping Addres"
+     * 
+     * @param {order} order - order for render
+     */
+    renderShippingAddress(order) {
+        const name = document.querySelectorAll(".js-name");
+        const address = document.querySelectorAll(".js-street");
+        const zipCode = document.querySelectorAll(".js-zip-code");
+        const region = document.querySelectorAll(".js-region");
+        const country = document.querySelectorAll(".js-country");
+
+        name.forEach((e) => {
+            e.textContent = order.shipTo.name;
+        });
+        address.forEach((e) => {
+            e.textContent = order.shipTo.address;
+        });
+        zipCode.forEach((e) => {
+            e.textContent = order.shipTo.ZIP;
+        });
+        region.forEach((e) => {
+            e.textContent = order.shipTo.region;
+        });
+        country.forEach((e) => {
+            e.textContent = order.shipTo.country;
+        });
+    }
+
+    /**
+     * renders part "Details"
+     * 
+     * @param {order} order - order for render 
+     */
+    renderDetails(order) {
+        const customerName = document.querySelectorAll(".js-customer-name");
+        const customerAddress = document.querySelectorAll(".js-customer-address");
+        const customerPhone = document.querySelectorAll(".customer-phone");
+        const customerEmail = document.querySelectorAll(".js-customer-email");
+
+        customerName.forEach((e) => {
+            e.textContent = order.customerInfo.firstName + " " + order.customerInfo.lastName;
+        });
+        customerAddress.forEach((e) => {
+            e.textContent = order.customerInfo.address;
+        });
+        customerPhone.forEach((e) => {
+            e.textContent = order.customerInfo.phone;
+        });
+        customerEmail.forEach((e) => {
+            e.textContent = order.customerInfo.email;
+        });
+    }
+
+    /**
+     * renders part "Line Items"
+     * 
+     * @param {object[]} products - products for render 
+     */
+    renderLineItems(products) {
+        const noProducts = document.querySelector(".no-products");
+        const lineItemsContent = document.querySelector(".js-line-items-content");
+        const countItems = document.querySelector(".count-items");
+
+        countItems.textContent = `Line Items(${products.length})`;
+
+        if (products.length > 0) {
+            lineItemsContent.style.display = "block";
+            noProducts.style.display = "none";
+
+            this.renderTable(products);
+        } else {
+            lineItemsContent.style.display = "none";
+            noProducts.style.display = "flex";
+        }
+    }
+
+    /**
+     * renders table in "Line Items"
+     * 
+     * @param {Object[]} products - products for render 
+     */
+    renderTable(products) {
+        const tableContent = document.querySelector(".table-content");
+
+        tableContent.innerHTML = "";
+
+        products.forEach((product) => {
+            const row = document.createElement("tr");
+            row.classList.add("product-item");
+
+            row.innerHTML = `&lt;td class="product-row">&lt;b>${product.name}&lt;/b>&lt;p>${product.id}&lt;/p>&lt;/td>
+                             &lt;td data-label="Unit Price:" class="product-row">&lt;p>&lt;b>${product.price}&lt;/b> ${product.currency}&lt;/p>&lt;/td>
+                             &lt;td data-label="Quantity:" class="product-row">${product.quantity}&lt;/td>
+                             &lt;td data-label="Total:" class="product-row">&lt;p>&lt;b>${product.totalPrice}&lt;/b> ${product.currency}&lt;/p>&lt;/td>
+                             &lt;td class="delete-btn product-row">&lt;i class="fa fa-trash-o" aria-hidden="true">&lt;/i>&lt;/td>`;
+
+            row.querySelector(".delete-btn").addEventListener("click", () => {
+                this.confirmAction("deleteProduct", product);
+            });
+            tableContent.appendChild(row);
+        });
+    }
+
+    /**
+     * adds event listeners for switch tabs "Map", "Details" and "Shipping Address"
+     */
+    switchTabsInOrder() {
+        const shippingAddressIcon = document.querySelector(".shipping-address-icon");
+        const customerInfIcon = document.querySelector(".customer-inf-icon");
+        const mapIcon = document.querySelector(".map-icon");
+        const shippingAddress = document.querySelector(".shipping-address");
+        const customerInformation = document.querySelector(".customer-information");
+        const map = document.querySelector("#map");
+
+        mapIcon.addEventListener("click", this.clickOnIcon.bind(event, mapIcon, map));
+
+        shippingAddressIcon.addEventListener("click", this.clickOnIcon.bind(event, shippingAddressIcon, shippingAddress));
+
+        customerInfIcon.addEventListener("click", this.clickOnIcon.bind(event, customerInfIcon, customerInformation));
+    }
+
+    /**
+     * switching tabs function
+     * 
+     * @param {Object} icon - clicked icon 
+     * @param {Object} tab - tab for display
+     */
+    clickOnIcon(icon, tab) {
+        const shippingAddress = document.querySelector(".shipping-address");
+        const customerInformation = document.querySelector(".customer-information");
+        const map = document.querySelector("#map");
+        const activeIcon = document.querySelector(".active-icon");
+
+        customerInformation.style.display = "none";
+        map.style.display = "none";
+        shippingAddress.style.display = "none";
+        activeIcon.classList.remove("active-icon");
+        icon.parentNode.classList.add("active-icon");
+        tab.style.display = "block";
+    }
+
+    /**
+     * initialization yandex map
+     */
+    initMap(res) {
+        let myMap;
+
+        this.clearMap();
+
+        myMap = new ymaps.Map("map", {
+            center: res.geoObjects.get(0).geometry.getCoordinates(),
+            zoom: 10
+        });
+        myMap.geoObjects.add(res.geoObjects);
+    }
+
+    clearMap() {
+        let mapContainer = document.querySelector("#map");
+        mapContainer.innerHTML = " ";
+    }
+
+
+    /**
+     * number validations
+     * 
+     * @param {Object} input - input for validation 
+     * @returns {boolean}
+     */
+    validationNumber(input) {
+        if (input.value == "" || Number.isNaN(+input.value)) {
+            input.style.border = "1px solid #ef9a9a";
+            return false;
+        } else {
+            input.style.border = "1px solid #636a72";
+            return true;
+        }
+    }
+
+    /**
+     * email validation
+     * 
+     * @param {Object} input - input for validation 
+     * @returns {boolean}
+     */
+    validationEmail(input) {
+        let email = new RegExp("^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$");
+        if (!email.test(input.value)) {
+            input.style.border = "1px solid #ef9a9a";
+            return false;
+        } else {
+            input.style.border = "1px solid #636a72";
+            return true;
+        }
+    }
+
+    /**
+     * text validation
+     * 
+     * @param {Object} input - input for validation
+     * @returns {boolean} 
+     */
+    validationText(input) {
+        if (input.value == "") {
+            input.style.border = "1px solid #ef9a9a";
+            return false;
+        } else {
+            input.style.border = "1px solid #636a72";
+            return true;
+        }
+    }
+
+    /**
+     * tel validation
+     * 
+     * @param {Object} input - input for validation 
+     * @returns {boolean}
+     */
+    validationTel(input) {
+        if (input.value.length &lt; 7) {
+            input.style.border = "1px solid #ef9a9a";
+            return false;
+        } else {
+            input.style.border = "1px solid #636a72";
+            return true;
+        }
+    }
+
+    /**
+     * cleans inputs in window
+     * 
+     * @param {object} window - window for clean 
+     */
+    cleanFields(window) {
+        const fields = window.querySelectorAll(".fields-input")
+        fields.forEach((field) => {
+            field.value = "";
+        });
+    }
+
+    /**
+     * adds event listeners for add new product
+     */
+    addNewProduct() {
+        const closeBtn = document.querySelector(".js-close-cpw");
+        const popupWindow = document.querySelector(".popup-window");
+        const addBtn = document.querySelector(".add-product-btn");
+        const createProductWindow = document.querySelector(".create-product-window");
+        const createBtn = document.querySelector(".js-create-product-btn");
+
+        /**
+         * closes window "add new product"
+         */
+        closeBtn.addEventListener("click", () => {
+            popupWindow.style.display = "none";
+            createProductWindow.style.display = "none";
+            this.cleanFields(createProductWindow);
+        });
+
+        /**
+         * opens window "add new product"
+         */
+        addBtn.addEventListener("click", () => {
+            popupWindow.style.display = "flex";
+            createProductWindow.style.display = "flex";
+        });
+
+        /**
+         * calls function for create new product and closes window "add new product"
+         */
+        createBtn.addEventListener("click", () => {
+            if (this.createProduct()) {
+                this.emit("createProduct");
+                popupWindow.style.display = "none";
+                createProductWindow.style.display = "none";
+                this.cleanFields(createProductWindow);
+            }
+        });
+    }
+
+    /**
+     * creates new product
+     * @returns {object} - new product
+     */
+    createProduct() {
+        const productName = document.querySelector(".js-new-product-name");
+        const productPrice = document.querySelector(".js-new-product-price");
+        const productCurrency = document.querySelector(".js-new-product-currency");
+        const productQuantity = document.querySelector(".js-new-product-quantity");
+        const productTotalPrice = document.querySelector(".js-new-product-total-price");
+        const orderId = document.querySelector(".order-info-number").textContent.slice(6);
+        const validation = this.validationText(productName) &amp;&amp; this.validationNumber(productPrice) &amp;&amp; this.validationText(productCurrency) &amp;&amp;
+            this.validationNumber(productQuantity) &amp;&amp; this.validationNumber(productTotalPrice);
+
+        if (validation) {
+            return {
+                "name": productName.value,
+                "price": productPrice.value,
+                "currency": productCurrency.value,
+                "quantity": productQuantity.value,
+                "totalPrice": productTotalPrice.value,
+                "orderId": orderId
+            }
+        } else {
+            return false;
+        }
+
+    }
+
+    /**
+     * adds event listener for search button
+     */
+    searchProductBtn() {
+        const searchBtn = document.querySelector(".js-table-search-btn");
+
+        /**
+         * calls function for search products
+         */
+        searchBtn.addEventListener("click", () => {
+            this.emit("searchProduct");
+        });
+    }
+
+    /**
+     * @returns {string} - search request
+     */
+    searchProducts() {
+        return document.querySelector(".product-search").value;
+    }
+
+    /**
+     * @returns {string} - id of current order
+     */
+    getCurrentOrderId() {
+        return document.querySelector(".order-info-number").textContent.slice(6);
+    }
+
+    /**
+     * calls function for sort table
+     */
+    sortTable() {
+        this.sortTableByNameAsc();
+        this.sortTableByNameDesc();
+        this.resetSortTableByName();
+        this.sortTableByUnitPriceAsc();
+        this.sortTableByUnitPriceDesc();
+        this.resetSortTableByUnitPrice();
+        this.sortTableByTotalPriceAsc();
+        this.sortTableByTotalPriceDesc();
+        this.resetSortTableByTotalPrice();
+    }
+
+    /**
+     * adds event listener for sort table by name ascending 
+     */
+    sortTableByNameAsc() {
+        const ascProductSort = document.querySelector(".asc-product-sort");
+        const descProductSort = document.querySelector(".desc-product-sort");
+
+        /**
+         * calls fucntion for sortTable
+         */
+        ascProductSort
+            .addEventListener("click", () => {
+                ascProductSort.style.display = "none";
+                descProductSort.style.display = "block";
+                this.emit("sortTableAscending", "name");
+            });
+    }
+
+    /**
+     * adds event listener for sort table by name descending 
+     */
+    sortTableByNameDesc() {
+        const descProductSort = document.querySelector(".desc-product-sort");
+        const resetProductSort = document.querySelector(".reset-product-sort");
+
+        /**
+         * calls fucntion for sortTable
+         */
+        descProductSort
+            .addEventListener("click", () => {
+                descProductSort.style.display = "none";
+                resetProductSort.style.display = "block";
+                this.emit("sortTableDescending", "name");
+            });
+    }
+
+    /**
+     * adds event listener reset sort table by name
+     */
+    resetSortTableByName() {
+        const resetProductSort = document.querySelector(".reset-product-sort");
+        const ascProductSort = document.querySelector(".asc-product-sort");
+
+        /**
+         * calls function for resetSort
+         */
+        resetProductSort.addEventListener("click",()=>{
+            resetProductSort.style.display = 'none';
+            ascProductSort.style.display = "block";
+            this.emit("searchProduct");
+        });
+    }
+
+    /**
+     * adds event listener for sort table by unit price ascending 
+     */
+    sortTableByUnitPriceAsc() {
+        const ascUnitPriceSort = document.querySelector(".asc-unit-price-sort");
+        const descUnitPriceSort = document.querySelector(".desc-unit-price-sort");
+
+        /**
+         * calls fucntion for sortTable
+         */
+        ascUnitPriceSort
+            .addEventListener("click", () => {
+                ascUnitPriceSort.style.display = "none";
+                descUnitPriceSort.style.display = "block";
+                this.emit("sortTableAscending", "price");
+            });
+    }
+
+    /**
+     * adds event listener for sort table by unit price descending 
+     */
+    sortTableByUnitPriceDesc() {
+        const descUnitPriceSort = document.querySelector(".desc-unit-price-sort");
+        const resetUnitPriceSort = document.querySelector(".reset-unit-price-sort");
+
+        /**
+         * calls fucntion for sortTable
+         */
+        descUnitPriceSort
+            .addEventListener("click", () => {
+                descUnitPriceSort.style.display = "none";
+                resetUnitPriceSort.style.display = "block";
+                this.emit("sortTableDescending", "price");
+            });
+    }
+
+     /**
+     * adds event listener reset sort table by unit price
+     */
+    resetSortTableByUnitPrice() {
+        const resetUnitPriceSort = document.querySelector(".reset-unit-price-sort");
+        const ascUnitPriceSort = document.querySelector(".asc-unit-price-sort");
+
+        /**
+         * calls function for resetSort
+         */
+        resetUnitPriceSort.addEventListener("click",()=>{
+            resetUnitPriceSort.style.display = 'none';
+            ascUnitPriceSort.style.display = "block";
+            this.emit("searchProduct");
+        });
+    }
+
+    /**
+     * adds event listener for sort table by total price ascending 
+     */
+    sortTableByTotalPriceAsc() {
+        const ascTotalPriceSort = document.querySelector(".asc-total-price-sort");
+        const descTotalPriceSort = document.querySelector(".desc-total-price-sort");
+
+        /**
+         * calls fucntion for sortTable
+         */
+        ascTotalPriceSort
+            .addEventListener("click", () => {
+                ascTotalPriceSort.style.display = "none";
+                descTotalPriceSort.style.display = "block";
+                this.emit("sortTableAscending", "totalPrice");
+            });
+    }
+
+    /**
+     * adds event listener for sort table by total price descending 
+     */
+    sortTableByTotalPriceDesc() {
+        const descTotalPriceSort = document.querySelector(".desc-total-price-sort");
+        const resetTotalPriceSort = document.querySelector(".reset-total-price-sort");
+
+        /**
+         * calls fucntion for sortTable
+         */
+        descTotalPriceSort
+            .addEventListener("click", () => {
+                descTotalPriceSort.style.display = "none";
+                resetTotalPriceSort.style.display = "block";
+                this.emit("sortTableDescending", "totalPrice");
+            });
+    }
+
+    /**
+     * adds event listener reset sort table by total price
+     */
+    resetSortTableByTotalPrice() {
+        const resetTotalPriceSort = document.querySelector(".reset-total-price-sort");
+        const ascTotalPriceSort = document.querySelector(".asc-total-price-sort");
+
+        /**
+         * calls function for resetSort
+         */
+        resetTotalPriceSort.addEventListener("click",()=>{
+            resetTotalPriceSort.style.display = 'none';
+            ascTotalPriceSort.style.display = "block";
+            this.emit("searchProduct");
+        });
+    }
+
+    /**
+     * adds event listeners for add new order
+     */
+    addNewOrder() {
+        const closeBtn = document.querySelector(".js-close-cow");
+        const createOrderWindow = document.querySelector(".create-order-window");
+        const popupWindow = document.querySelector(".popup-window");
+        const addBtn = document.querySelector(".js-add-order-btn");
+        const createBtn = document.querySelector(".js-create-order-btn");
+
+        /**
+         * opens window "add new order"
+         */
+        addBtn.addEventListener("click", () => {
+            popupWindow.style.display = "flex";
+            createOrderWindow.style.display = "flex";
+        });
+
+        /**
+         * closes window "add new order"
+         */
+        closeBtn.addEventListener("click", () => {
+            popupWindow.style.display = "none";
+            createOrderWindow.style.display = "none";
+            this.cleanFields(createOrderWindow);
+        });
+
+        /**
+         * calls function for create new order
+         */
+        createBtn.addEventListener("click", () => {
+            if (this.createSummary() &amp;&amp; this.createShipTo() &amp;&amp; this.createCustomerInfo()) {
+                this.emit("createOrder");
+                popupWindow.style.display = "none";
+                createOrderWindow.style.display = "none";
+                this.cleanFields(createOrderWindow);
+            }
+
+        });
+    }
+
+    /**
+     * creates part "summary" of new order
+     * @returns {(Object|boolean)} - new "summary" or false
+     */
+    createSummary() {
+        const customer = document.querySelector(".js-new-order-customer");
+        const orderStatus = document.querySelector(".js-new-order-status");
+        const shipped = document.querySelector(".js-new-order-shipped");
+        const currency = document.querySelector(".js-new-order-currency");
+        const createdAt = `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`;
+        const validation = this.validationText(customer) &amp;&amp; this.validationText(orderStatus) &amp;&amp; this.validationText(shipped) &amp;&amp;
+            this.validationText(currency);
+
+        if (validation) {
+            return {
+                "createdAt": createdAt,
+                "customer": customer.value,
+                "status": orderStatus.value,
+                "shippedAt": shipped.value,
+                "currency": currency.value
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * creates part "ship to" of new order
+     * @returns {(Object|boolean)} - new "ship to" or false
+     */
+    createShipTo() {
+        const name = document.querySelector(".js-new-order-name");
+        const address = document.querySelector(".js-new-order-ship-to-address");
+        const orderZIP = document.querySelector(".js-new-order-ZIP");
+        const region = document.querySelector(".js-new-order-region");
+        const country = document.querySelector(".js-new-order-country");
+        const validation = this.validationText(name) &amp;&amp; this.validationText(address) &amp;&amp; this.validationNumber(orderZIP) &amp;&amp; this.validationText(region) &amp;&amp;
+            this.validationText(country);
+
+        if (validation) {
+            return {
+                "name": name.value,
+                "address": address.value,
+                "ZIP": orderZIP.value,
+                "region": region.value,
+                "country": country.value
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * creates part "customer info" of new order
+     * @returns {(Object|boolean)} - new "customer info" of false
+     */
+    createCustomerInfo() {
+        const firstName = document.querySelector(".js-new-order-first-name");
+        const lastName = document.querySelector(".js-new-order-last-name");
+        const address = document.querySelector(".js-new-order-customer-address");
+        const phone = document.querySelector(".js-new-order-phone");
+        const email = document.querySelector(".js-new-order-email");
+        let validation = this.validationText(firstName) &amp;&amp; this.validationText(lastName) &amp;&amp; this.validationText(address) &amp;&amp; this.validationTel(phone) &amp;&amp;
+            this.validationEmail(email);
+
+        if (validation) {
+            return {
+                "firstName": firstName.value,
+                "lastName": lastName.value,
+                "address": address.value,
+                "phone": phone.value,
+                "email": email.value
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * adds event listener for delete btn for orders
+     */
+    deleteOrder() {
+        const deleteBtn = document.querySelector(".delete-order-btn");
+
+        deleteBtn.addEventListener("click", () => {
+            this.confirmAction("deleteOrder");
+        });
+    }
+
+    /**
+     * adds event lister for switch orders
+     */
+    chooseOrderItemEvent() {
+        const orderItems = document.querySelectorAll(".order-item");
+
+        /**
+         * calls function for choose order item
+         */
+        orderItems.forEach(orderItem => {
+            orderItem.addEventListener("click", () => {
+                this.emit("chooseOrderItem", orderItem);
+            });
+        });
+    }
+
+    /**
+     * switching orders
+     * 
+     * @param {Object[]} orders - orders
+     * @param {Object} orderItem - selected order item
+     */
+    chooseOrderItem(orders, orderItem) {
+        const activeOrder = document.querySelector(".order-item-active");
+
+        if (activeOrder) {
+            activeOrder.classList.remove("order-item-active");
+        }
+
+        orderItem.classList.add("order-item-active");
+
+        orders.forEach((order) => {
+            if (orderItem.querySelector(".order-number").textContent == `Order ${order.id}`) {
+                this.renderInformation(order);
+                document.location.hash = `#${order.id}`;
+            }
+        });
+    }
+
+
+    /**
+     * adds event listeners for search order
+     */
+    searchOrdersEvent() {
+        const searchBtn = document.querySelector(".js-search-btn");
+        const refreshBtn = document.querySelector(".js-refresh-btn");
+
+        /**
+         * calls function for search order
+         */
+        searchBtn.addEventListener("click", () => {
+            this.emit("searchOrders");
+        });
+
+        /**
+         * calls function for refresh search
+         */
+        refreshBtn.addEventListener("click", () => {
+            document.querySelector(".order-search").value = "";
+            this.emit("searchOrders");
+        });
+    }
+
+    /**
+     * @returns {string} search request
+     */
+    searchOrders() {
+        return document.querySelector(".order-search").value;
+    }
+
+
+    /**
+     * gets DOM object styles 
+     * 
+     * @param {object} e - DOM object
+     * @returns {object} - DOM objects style  
+     */
+    getCssStyle(e) {
+        if (e.currentStyle) {
+            return e.currentStyle;
+        } else if (window.getComputedStyle) {
+            return window.getComputedStyle(e, null);
+        }
+    }
+
+    /**
+     * gets value from input
+     * 
+     * @param {Object[]} inputs - inputs
+     * @returns {string} - value from input
+     */
+    getValueFromInput(inputs) {
+        let value = "";
+        inputs.forEach(input => {
+            if (this.getCssStyle(input.parentNode.parentNode).display != "none") {
+                value = input.value;
+            }
+        });
+        return value;
+    }
+
+    /**
+     * shows inputs and hides fields
+     * 
+     * @param {Object[]} fields - fields for hide 
+     * @param {Object[]} inputs - inputs for show
+     */
+    showInputs(fields, inputs) {
+        fields.forEach(field => {
+            field.style.display = "none"
+        });
+        inputs.forEach(input => {
+            input.value = fields[0].textContent;
+            input.style.display = "block"
+        });
+    }
+
+    /**
+     * adds event listeners for change info in "shipping address"
+     */
+    changeShippingAddress() {
+        const editBtn = document.querySelector(".js-edit-shipping-address");
+        const saveBtn = document.querySelector(".js-save-shipping-address");
+        const closeBtn = document.querySelector(".js-close-shipping-address");
+
+        /**
+         * calls function for turns on edit mode
+         */
+        editBtn.addEventListener("click", () => {
+            editBtn.style.display = "none";
+            saveBtn.style.display = "block";
+            closeBtn.style.display = "block";
+            this.editShippingAddress();
+        });
+
+        /**
+         * calls function for save changes and function for turns off edit mode
+         */
+        saveBtn.addEventListener("click", () => {
+            saveBtn.style.display = "none";
+            closeBtn.style.display = "none";
+            editBtn.style.display = "";
+            this.emit("changeShippingAddress");
+            this.closeShippingAddress();
+        });
+
+        /**
+         * calls function for turns off edit mod without saving
+         */
+        closeBtn.addEventListener("click", () => {
+            saveBtn.style.display = "none";
+            closeBtn.style.display = "none";
+            editBtn.style.display = "";
+            this.closeShippingAddress();
+        });
+    }
+
+    /**
+     * enables editing mode in "shipping addres"
+     */
+    editShippingAddress() {
+        const names = document.querySelectorAll(".js-name");
+        const nameInputs = document.querySelectorAll(".js-name-input");
+        const streets = document.querySelectorAll(".js-street");
+        const streetInputs = document.querySelectorAll(".js-street-input");
+        const zipCodes = document.querySelectorAll(".js-zip-code");
+        const zipCodeInputs = document.querySelectorAll(".js-zip-code-input");
+        const regions = document.querySelectorAll(".js-region");
+        const regionInputs = document.querySelectorAll(".js-region-input");
+        const countrys = document.querySelectorAll(".js-country");
+        const countryInputs = document.querySelectorAll(".js-country-input");
+
+        this.showInputs(names, nameInputs);
+        this.showInputs(streets, streetInputs);
+        this.showInputs(zipCodes, zipCodeInputs);
+        this.showInputs(regions, regionInputs);
+        this.showInputs(countrys, countryInputs);
+
+    }
+
+    /**
+     * saving changing in "shipping address"  
+     * 
+     * @param {Object[]} orders - orders
+     * @returns {Object} - edited order
+     */
+    saveChangesShippingAddress(orders) {
+        const nameInputs = document.querySelectorAll(".js-name-input");
+        const streetInputs = document.querySelectorAll(".js-street-input");
+        const zipCodeInputs = document.querySelectorAll(".js-zip-code-input");
+        const regionInputs = document.querySelectorAll(".js-region-input");
+        const countryInputs = document.querySelectorAll(".js-country-input");
+
+        let newOrder = {};
+        orders.forEach(order => {
+            if (order.id == this.getCurrentOrderId()) {
+                order.shipTo.name = this.getValueFromInput(nameInputs);
+                order.shipTo.address = this.getValueFromInput(streetInputs);
+                order.shipTo.ZIP = this.getValueFromInput(zipCodeInputs);
+                order.shipTo.region = this.getValueFromInput(regionInputs);
+                order.shipTo.country = this.getValueFromInput(countryInputs);
+
+                newOrder = order;
+            }
+        });
+        return newOrder;
+    }
+
+    /**
+     * turns off edit mode without saving
+     */
+    closeShippingAddress() {
+        const names = document.querySelectorAll(".js-name");
+        const streets = document.querySelectorAll(".js-street");
+        const zipCodes = document.querySelectorAll(".js-zip-code");
+        const regions = document.querySelectorAll(".js-region");
+        const countrys = document.querySelectorAll(".js-country");
+        const inputs = document.querySelectorAll(".shipping-address input");
+
+        inputs.forEach(input => {
+            input.style.display = "none";
+        });
+
+        names.forEach(name => {
+            name.style.display = "block";
+        })
+        streets.forEach(street => {
+            street.style.display = "block";
+        });
+        zipCodes.forEach(code => {
+            code.style.display = "block"
+        });
+        regions.forEach(region => {
+            region.style.display = "block"
+        });
+        countrys.forEach(country => {
+            country.style.display = "block"
+        });
+    }
+
+    /**
+     * adds event listeners for change info in "customer information"
+     */
+    changeCustomerInf() {
+        const editBtn = document.querySelector(".js-edit-customer-inf");
+        const saveBtn = document.querySelector(".js-save-customer-inf");
+        const closeBtn = document.querySelector(".js-close-customer-inf");
+
+        /**
+         * calls function for turns on editing mode in "customer info"
+         */
+        editBtn.addEventListener("click", () => {
+            editBtn.style.display = "none";
+            closeBtn.style.display = "block";
+            saveBtn.style.display = "block";
+            this.editCustomerInf();
+        });
+
+        /**
+         * calls function for save changes and function for turns off edit mode
+         */
+        saveBtn.addEventListener("click", () => {
+            closeBtn.style.display = "none";
+            saveBtn.style.display = "none";
+            editBtn.style.display = "block";
+            this.emit("changeCustomerInf");
+            this.closeCustomerInf();
+        });
+
+        /**
+         * calls function for turns off edit mode without saving
+         */
+        closeBtn.addEventListener("click", () => {
+            closeBtn.style.display = "none";
+            saveBtn.style.display = "none";
+            editBtn.style.display = "block";
+            this.closeCustomerInf();
+        });
+    }
+
+    /**
+     * enables editing mode in "customer info"
+     */
+    editCustomerInf() {
+        const names = document.querySelectorAll(".js-customer-name");
+        const nameInputs = document.querySelectorAll(".js-customer-name-input");
+        const addresses = document.querySelectorAll(".js-customer-address");
+        const addressInputs = document.querySelectorAll(".js-customer-address-input");
+        const phones = document.querySelectorAll(".customer-phone");
+        const phoneInputs = document.querySelectorAll(".js-customer-phone-input");
+        const emails = document.querySelectorAll(".js-customer-email");
+        const emailInputs = document.querySelectorAll(".js-customer-email-input");
+
+        this.showInputs(names, nameInputs);
+        this.showInputs(addresses, addressInputs);
+        this.showInputs(phones, phoneInputs);
+        this.showInputs(emails, emailInputs);
+    }
+
+    /**
+     * create new order with changes in "customer information"
+     * 
+     * @param {Object[]} orders - orders
+     * @returns {Object} - changes order
+     */
+    saveChangesCustomerInf(orders) {
+        const nameInputs = document.querySelectorAll(".js-customer-name-input");
+        const addressInputs = document.querySelectorAll(".js-customer-address-input");
+        const phoneInputs = document.querySelectorAll(".js-customer-phone-input");
+        const emailInputs = document.querySelectorAll(".js-customer-email-input");
+        let newOrder = {};
+        orders.forEach(order => {
+            if (order.id == this.getCurrentOrderId()) {
+                const name = this.getValueFromInput(nameInputs);
+                order.customerInfo.firstName = name.slice(0, name.indexOf(" "));
+                order.customerInfo.lastName = name.slice(name.indexOf(" "));
+                order.customerInfo.address = this.getValueFromInput(addressInputs);
+                order.customerInfo.phone = this.getValueFromInput(phoneInputs);
+                order.customerInfo.email = this.getValueFromInput(emailInputs);
+
+                newOrder = order;
+            }
+        });
+
+        return newOrder;
+    }
+
+    /**
+     * turns off edit mode without saving
+     */
+    closeCustomerInf() {
+        const names = document.querySelectorAll(".js-customer-name");
+        const addresses = document.querySelectorAll(".js-customer-address");
+        const phones = document.querySelectorAll(".customer-phone");
+        const emails = document.querySelectorAll(".js-customer-email");
+        const inputs = document.querySelectorAll(".customer-information input");
+
+        inputs.forEach(input => {
+            input.style.display = "none";
+        });
+
+        names.forEach(name => {
+            name.style.display = "block";
+        });
+        addresses.forEach(address => {
+            address.style.display = "block";
+        });
+        phones.forEach(phone => {
+            phone.style.display = "block";
+        });
+        emails.forEach(email => {
+            email.style.display = "block";
+        });
+    }
+
+    /**
+     * shows confirm window
+     * 
+     * @param {function} event - function 
+     * @param {*} arg - argument
+     */
+    confirmAction(event, arg) {
+        const popupWindow = document.querySelector(".popup-window");
+        const confirmWindow = document.querySelector(".confirm-window");
+        const yesBtn = document.querySelector(".yes-btn");
+        const noBtn = document.querySelector(".no-btn");
+
+        popupWindow.style.display = "flex";
+        confirmWindow.style.display = "flex";
+
+        /**
+         * closes confirm window
+         */
+        noBtn.addEventListener("click", () => {
+            popupWindow.style.display = "none";
+            confirmWindow.style.display = "none";
+        });
+
+        /**
+         * confirms action and closes confirm window
+         */
+        yesBtn.addEventListener("click", () => {
+            popupWindow.style.display = "none";
+            confirmWindow.style.display = "none";
+            this.emit(event, arg);
+        })
+    }
+
+    /**
+     * shows sidebar in mobile version
+     */
+    showSidebar() {
+        let showBtn = document.querySelector(".show-sidebar-btn");
+        let sidebar = document.querySelector(".sidebar");
+        let hiddenBtn = document.querySelector(".hidden-sidebar-btn")
+
+        /**
+         * shows sidebar
+         */
+        showBtn.addEventListener("click", () => {
+            sidebar.style.display = "flex";
+            showBtn.style.display = "none";
+            sidebar.style.position = "absolute";
+        });
+
+        /**
+         * hiddens sidebar
+         */
+        hiddenBtn.addEventListener("click", () => {
+            sidebar.style.display = "none";
+            showBtn.style.display = "";
+        })
+    }
+
+}
+export default View;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Controller.html">Controller</a></li><li><a href="EventEmitter.html">EventEmitter</a></li><li><a href="Model.html">Model</a></li><li><a href="View.html">View</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Mon Nov 18 2019 17:30:04 GMT+0300 (GMT+03:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

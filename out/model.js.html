@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: model.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: model.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * class model
+ */
+class Model {
+    constructor() {
+
+    }
+
+    /**
+     * update objects in database
+     * 
+     * @param {string} url - url for requers 
+     * @param {Object} body - updated object
+     * @returns {Promise}
+     */
+    updateData(url, body) {
+        const headers = {
+            "Content-Type": "application/json"
+        };
+        return fetch(url, {
+            method: "PUT",
+            body: JSON.stringify(body),
+            headers: headers
+        }).catch(e => console.error(e));
+    }
+
+    /**
+     * delete objects in database
+     * 
+     * @param {url} url - url for request 
+     * @returns {Promise}
+     */
+    deleteData(url) {
+        return fetch(url, {
+            method: "DELETE"
+        }).catch(e => console.error(e));
+    }
+
+    /**
+     * get data from database
+     * 
+     * @param {url} url - url for request
+     * @returns {Object[]}
+     */
+    getData(url) {
+        return fetch(url).then(response => {
+            return response.json();
+        }).catch(e => console.error(e));
+    }
+
+    /**
+     * add new object in database
+     * 
+     * @param {string} url - url for request 
+     * @param {*} body - new object
+     * @returns {Promise}
+     */
+    postData(url, body) {
+        const headers = {
+            "Content-Type": "application/json"
+        };
+        return fetch(url, {
+            method: "POST",
+            body: JSON.stringify(body),
+            headers: headers
+        }).catch(e => console.error(e));
+    }
+
+    /**
+     * get orders from database
+     * @returns {Object[]}
+     */
+    async getOrders() {
+        let orders = [];
+
+        await this.getData("http://localhost:3000/api/Orders")
+            .then(data => {
+                data.forEach(order => {
+                    orders.push(order);
+                });
+            });
+
+        for (let i = 0; i &lt; orders.length; i++) {
+            await this.getData(`http://localhost:3000/api/Orders/${orders[i].id}/products`)
+                .then(data => {
+                    if (data.length > 0) {
+                        orders[i].products = data;
+                    } else {
+                        orders[i].products = [];
+                    }
+                });
+
+        }
+
+        return orders;
+    }
+
+    /**
+     * search products
+     * 
+     * @param {string} searchProduct - search request 
+     * @param {string} currentOrderId - current order ID
+     * @returns {Object[]}
+     */
+    async serachProducts(searchProduct, currentOrderId) {
+        let result = [];
+        const searchText = new RegExp(searchProduct.trim(), "i");
+        await this.getOrders().then(orders => {
+            orders.forEach((order) => {
+                if (order.id == currentOrderId) {
+                    if (searchProduct != "") {
+                        order.products.forEach((product) => {
+                            let checkCondition = false;
+                            Object.keys(product).forEach((property) => {
+
+                                if (searchText.test(product[property])) {
+                                    checkCondition = true;
+                                }
+                            });
+
+                            if (checkCondition) {
+                                result.push(product);
+                            }
+                        });
+                    } else {
+                        result.push(...order.products);
+                    }
+                }
+            });
+        });
+        return result;
+    }
+
+    /**
+     * sort table ascending
+     * 
+     * @param {string} property - sortable field
+     * @param {Object[]} products - products for sort
+     * @returns {Object[]} - sorted products
+     */
+    sortTableAscending(property, products) {
+        if (!+products[0][property]) {
+            products.sort((a, b) => {
+                return a[property] > b[property] ? 1 : -1;
+            });
+
+
+        } else {
+            products.sort((a, b) => {
+                return +a[property] > +b[property] ? 1 : -1;
+            });
+        }
+        return products;
+    }
+
+    /**
+     * sort table descending
+     * 
+     * @param {string} property - sortable field
+     * @param {Object[]} products - products for sort
+     * @returns {Object[]} - sorted products
+     */
+    sortTableDescending(property, products) {
+
+        if (!+products[0][property]) {
+            products.sort((a, b) => {
+                return a[property] &lt; b[property] ? 1 : -1;
+            });
+        } else {
+            products.sort((a, b) => {
+                return +a[property] &lt; +b[property] ? 1 : -1;
+            });
+        }
+
+        return products;
+    }
+
+    /**
+     * search orders
+     * 
+     * @param {string} searchOrder - search request
+     * @returns {Object[]} - searched orders 
+     */
+    searchOrders(searchOrder) {
+        return this.getOrders().then(orders => {
+            if (searchOrder) {
+
+                let searchedOrders = [];
+                orders.forEach((order) => {
+                    const searchText = new RegExp(searchOrder.trim(), "i");
+                    let checkCondition = false;
+
+                    Object.keys(order.summary).forEach((property) => {
+                        if (searchText.test(order.summary[property])) {
+                            checkCondition = true;
+                        }
+                    });
+
+                    if (searchText.test(`Order ${order.id}`)) {
+                        checkCondition = true;
+                    }
+
+                    if (checkCondition) {
+                        searchedOrders.push(order);
+                    }
+
+                });
+                return searchedOrders;
+            } else {
+                return orders;
+            }
+        });
+    }
+}
+
+export default Model;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Controller.html">Controller</a></li><li><a href="EventEmitter.html">EventEmitter</a></li><li><a href="Model.html">Model</a></li><li><a href="View.html">View</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Mon Nov 18 2019 17:30:04 GMT+0300 (GMT+03:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

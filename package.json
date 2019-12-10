@@ -1,0 +1,19 @@
+{
+  "name": "lx-course-oct19-tsyabuk-alexey-vanillajs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs": "./node_modules/.bin/jsdoc -c jsdoc.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://edu-gitlab.leverx-group.com/aliaksei.tsiabuk/lx-course-oct19-tsyabuk-alexey-vanillajs.git"
+  },
+  "author": "Alexey Tsyabuk",
+  "license": "ISC",
+  "devDependencies": {
+    "jsdoc": "^3.6.3"
+  }
+}

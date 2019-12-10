@@ -4,240 +4,411 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="style.css">
     <script src="https://use.fontawesome.com/8e5e3ed411.js"></script>
-    <title>HW 1</title>
+    <link rel="stylesheet" href="style.css">
+    <title>Orders</title>
 </head>
 
 <body>
-    <di class="container">
+    <div class="popup-window">
+        <div class="confirm-window">
+            <p class="confirm-window-msg">Are you sure about this?</p>
+            <div class="confirm-buttons">
+                <div class="yes-btn confirm-button">yes</div>
+                <div class="no-btn confirm-button">no</div>
+            </div>
+        </div>
+        <div class="create-product-window">
+            <header>
+                <i class="fa fa-times close-button js-close-cpw" aria-hidden="true"></i>
+            </header>
+            <div>
+                <div class="order-field">
+                    <label class="fields-label">name:</label>
+                    <input type="text" class="fields-input js-new-product-name">
+                </div>
+                <div class="order-field">
+                    <label class="fields-label">price:</label>
+                    <input type="text" class="fields-input js-new-product-price">
+                </div>
+                <div class="order-field">
+                    <label class="fields-label">currency:</label>
+                    <input type="text" class="fields-input js-new-product-currency">
+                </div>
+                <div class="order-field">
+                    <label class="fields-label">quantity:</label>
+                    <input type="text" class="fields-input js-new-product-quantity">
+                </div>
+                <div class="order-field">
+                    <label class="fields-label">total price:</label>
+                    <input type="text" class="fields-input js-new-product-total-price">
+                </div>
+            </div>
+            <button class="js-create-product-btn popup-window-btn">Add</button>
+        </div>
+        <div class="create-order-window">
+            <header>
+                <i class="fa fa-times close-button js-close-cow" aria-hidden="true"></i>
+            </header>
+            <div class="order-fields">
+                <div>
+                    <div class="order-field">
+                        <label class="fields-label">customer:</label>
+                        <input type="text" class="fields-input js-new-order-customer">
+                    </div>
+                    <div class="order-field">
+                        <label class="fields-label">status:</label>
+                        <input type="text" class="fields-input js-new-order-status">
+                    </div>
+                    <div class="order-field">
+                        <label class="fields-label">shippedAt:</label>
+                        <input type="text" class="fields-input js-new-order-shipped" placeholder="dd.mm.yyyy">
+                    </div>
+                    <div class="order-field">
+                        <label class="fields-label">currency:</label>
+                        <input type="text" class="fields-input js-new-order-currency">
+                    </div>
+                    <div class="order-field">
+                        <label class="fields-label">name:</label>
+                        <input type="text" class="fields-input js-new-order-name">
+                    </div>
+                    <div class="order-field">
+                        <label class="fields-label">address:</label>
+                        <input type="text" class="fields-input js-new-order-ship-to-address">
+                    </div>
+                    <div class="order-field">
+                        <label class="fields-label">ZIP:</label>
+                        <input type="text" class="fields-input js-new-order-ZIP">
+                    </div>
+                </div>
+                <div>
+                    <div class="order-field">
+                        <labe class="fields-label" l>region:</labe>
+                        <input type="text" class="fields-input js-new-order-region">
+                    </div>
+                    <div class="order-field">
+                        <label class="fields-label">country:</label>
+                        <input type="text" class="fields-input js-new-order-country">
+                    </div>
+                    <div class="order-field">
+                        <label class="fields-label">firstName:</label>
+                        <input type="text" class="fields-input js-new-order-first-name">
+                    </div>
+                    <div class="order-field">
+                        <label class="fields-label">lastName:</label>
+                        <input type="text" class="fields-input js-new-order-last-name">
+                    </div>
+                    <div class="order-field">
+                        <label class="fields-label">address:</label>
+                        <input type="text" class="fields-input js-new-order-customer-address">
+                    </div>
+                    <div class="order-field">
+                        <label class="fields-label">phone:</label>
+                        <input type="text" class="fields-input js-new-order-phone">
+                    </div>
+                    <div class="order-field">
+                        <label class="fields-label">email:</label>
+                        <input type="text" class="fields-input js-new-order-email">
+                    </div>
+                </div>
+            </div>
+
+            <button class="js-create-order-btn popup-window-btn">Add</button>
+
+        </div>
+    </div>
+    <div class="not-found-page">
+        <p class="not-found-order-title">Error 404 Page not found :(</p>
+        <p class="not-found-order"></p>
+    </div>
+    <div class="container">
         <aside class="sidebar">
             <!--header for orders-->
             <header>
-                <i class="fa fa-chevron-left" aria-hidden="true"></i>
-                <p class="count-orders"></p>
+                <i class="fa fa-chevron-left hidden-sidebar-btn" aria-hidden="true"></i>
+                <p class="js-count-orders"></p>
                 <!--search form-->
-                <form>
+                <form class="order-search-form">
                     <input type="search" placeholder="поиск" class="order-search" />
-                    <div class="btn refresh-btn"><i class="fa fa-refresh" aria-hidden="true"></i></div>
-                    <div class="btn search-btn"><i class="fa fa-search" aria-hidden="true"></i></div>
+                    <div class="btn js-refresh-btn"><i class="fa fa-refresh" aria-hidden="true"></i></div>
+                    <div class="btn js-search-btn"><i class="fa fa-search" aria-hidden="true"></i></div>
                 </form>
             </header>
             <!--section orders-->
             <div class="orders">
+                <!--preloader-->
+                <div class="cssload-container">
+                    <div class="cssload-speeding-wheel"></div>
+                </div>
             </div>
             <!--end of section orders-->
             <!--footer for orders-->
             <footer>
-                <i class="fa fa-filter" aria-hidden="true"></i>
-                <i class="fa fa-bars" aria-hidden="true"></i>
+                <i class="fa fa-plus js-add-order-btn" aria-hidden="true"></i>
             </footer>
         </aside>
         <div class="content">
             <!--header for content-->
             <header>
-                <i class="fa fa-bars" aria-hidden="true"></i>
+                <i class="fa fa-bars show-sidebar-btn" aria-hidden="true"></i>
                 <p>Order</p>
             </header>
-            <!--information about order-->
-            <div class="order">
-                <!--start of order info block-->
-                <div class="order-info">
-                    <div class="left-order-info">
-                        <div class="order-info-block">
-                            <p class="order-info-number"></p>
-                            <p class="order-info-customer"></p>
-                            <p class="order-info-ordered"></p>
-                            <p class="order-info-shiped"></p>
-                        </div>
-                        <div class="icons">
-                            <div class="icon-container active-icon">
-                                <div class="shipping-address-icon">
-                                    <i class="fa fa-truck" aria-hidden="true"></i>
-                                </div>
+            <div class="no-order-info">
+                <p class="no-order-msg">No orders</p>
+            </div>
+            <div class="information">
+                <!--information about order-->
+                <div class="order">
+                    <!--start of order info block-->
+                    <div class="order-info">
+                        <div class="left-order-info">
+                            <div class="order-info-block">
+                                <p class="order-info-number"></p>
+                                <p class="order-info-customer"></p>
+                                <p class="order-info-ordered"></p>
+                                <p class="order-info-shiped"></p>
                             </div>
-                            <div class="icon-container">
-                                <div class="processor-inf-icon">
-                                    <i class="fa fa-user-o" aria-hidden="true"></i>
+                            <div class="icons">
+                                <div class="icon-container active-icon">
+                                    <div class="shipping-address-icon icon">
+                                        <i class="fa fa-truck" aria-hidden="true"></i>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="right-order-info">
-                        <p class="order-info-price"></p>
-                        <p class="order-info-currency"></p>
-                    </div>
-                </div>
-                <!--end of order info block-->
-                <!--start of processor information block-->
-                <div class="processor-information">
-                    <div class="heading">
-                        <p>Customer Information</p>
-                    </div>
-                    <div class="processor-inf-content">
-                        <div class="details">
-                            <p>Details</p>
-                            <!--details information for desktop-->
-                            <div class="details-inf">
-                                <div>
-                                    <p>Name: </p>
-                                    <p>Addres: </p>
-                                    <p>Phone: </p>
-                                    <p>Email: </p>
+                                <div class="icon-container">
+                                    <div class="customer-inf-icon icon">
+                                        <i class="fa fa-user-o" aria-hidden="true"></i>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p class="customer-name"></p>
-                                    <p class="customer-addres"></p>
-                                    <p class="phone"></p>
-                                    <p class="customer-email"></p>
-                                </div>
-                            </div>
-                            <!--details information for desktop-->
-                            <div class="details-inf-mobile">
-                                <div>
-                                    <p>Name: </p>
-                                    <p class="customer-name"></p>
-                                </div>
-                                <div>
-                                    <p>Addres: </p>
-                                    <p class="customer-addres"></p>
-                                </div>
-                                <div>
-                                    <p>Phone: </p>
-                                    <p class="phone"></p>
-                                </div>
-                                <div>
-                                    <p>Email: </p>
-                                    <p class="customer-email"></p>
+                                <div class="icon-container">
+                                    <div class="map-icon icon">
+                                        <i class="fa fa-map-o" aria-hidden="true"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="picture">
-                            <p>Picture</p>
-                            <img class="user-photo" src="./img/user-photo.jpg" alt="">
+                        <div class="right-order-info">
+                            <p class="order-info-price"></p>
+                            <p class="order-info-currency"></p>
                         </div>
                     </div>
+                    <!--end of order info block-->
+                    <!--start of map-->
+                    <div id="map">
+
+                    </div>
+                    <!--start of customer information block-->
+                    <div class="customer-information">
+                        <div class="heading">
+                            <p>Customer Information</p>
+                            <div class="edit-save">
+                                <p class="js-edit-customer-inf">Edit</p>
+                                <p class="save js-save-customer-inf">Save</p>
+                                <p class="close js-close-customer-inf">Close</p>
+                            </div>
+                        </div>
+                        <div class="customer-inf-content">
+                            <div class="details">
+                                <p class="customer-inf-title">Details</p>
+                                <!--details information for mobile-->
+                                <div class="details-inf-mobile">
+                                    <div class="details-inf-item">
+                                        <p class="details-inf-title">Name: </p>
+                                        <p class="js-customer-name"></p>
+                                        <input type="text" class="details-inf-input js-customer-name-input">
+                                    </div>
+                                    <div class="details-inf-item">
+                                        <p class="details-inf-title">Address: </p>
+                                        <p class="js-customer-address"></p>
+                                        <input type="text" class="details-inf-input js-customer-address-input">
+                                    </div>
+                                    <div class="details-inf-item">
+                                        <p class="details-inf-title">Phone: </p>
+                                        <p class="customer-phone"></p>
+                                        <input type="text" class="details-inf-input js-customer-phone-input">
+                                    </div>
+                                    <div class="details-inf-item">
+                                        <p class="details-inf-title">Email: </p>
+                                        <p class="js-customer-email"></p>
+                                        <input type="text" class="details-inf-input js-customer-email-input">
+                                    </div>
+                                </div>
+                                <!--details information for desktop-->
+                                <div class="details-inf">
+                                    <div class="details-inf-titles">
+                                        <p>Name: </p>
+                                        <p>Address: </p>
+                                        <p>Phone: </p>
+                                        <p>Email: </p>
+                                    </div>
+                                    <div>
+                                        <p class="js-customer-name"></p>
+                                        <p class="js-customer-address"></p>
+                                        <p class="customer-phone"></p>
+                                        <p class="js-customer-email"></p>
+                                        <input type="text" class="details-inf-input js-customer-name-input">
+                                        <input type="text" class="details-inf-input js-customer-address-input">
+                                        <input type="text" class="details-inf-input js-customer-phone-input">
+                                        <input type="text" class="details-inf-input js-customer-email-input">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="picture">
+                                <p class="customer-inf-title">Picture</p>
+                                <img class="user-photo" src="./img/user-photo.jpg" alt="">
+                            </div>
+                        </div>
+                    </div>
+                    <!--end of customer information block-->
+                    <!--start of shipping address block-->
+                    <div class="shipping-address">
+                        <div class="heading">
+                            <p>Shipping Address</p>
+                            <div class="edit-save">
+                                <p class="js-edit-shipping-address">Edit</p>
+                                <p class="save js-save-shipping-address">Save</p>
+                                <p class="close js-close-shipping-address">Close</p>
+                            </div>
+                        </div>
+                        <!--contact information for mobile-->
+                        <div class="contact-inf-mobile">
+                            <div class="contact-inf-item">
+                                <p class="contact-inf-mobile-titel">Name:</p>
+                                <p class="js-name"></p>
+                                <input type="text" class="contact-inf-input js-name-input">
+                            </div>
+                            <div class="contact-inf-item">
+                                <p class="contact-inf-mobile-titel">Street:</p>
+                                <p class="js-street"></p>
+                                <input type="text" class="contact-inf-input js-street-input">
+                            </div>
+                            <div class="contact-inf-item">
+                                <p class="contact-inf-mobile-titel">ZIP Code/City:</p>
+                                <p class="js-zip-code"></p>
+                                <input type="text" class="contact-inf-input js-zip-code-input">
+                            </div>
+                            <div class="contact-inf-item">
+                                <p class="contact-inf-mobile-titel">Region:</p>
+                                <p class="js-region"></p>
+                                <input type="text" class="contact-inf-input js-region-input">
+                            </div>
+                            <div class="contact-inf-item">
+                                <p class="contact-inf-mobile-titel">Country:</p>
+                                <p class="js-country"></p>
+                                <input type="text" class="contact-inf-input js-country-input">
+                            </div>
+                        </div>
+                        <!--contact information for desktop-->
+                        <div class="contact-inf">
+                            <div class="contact-inf-titles">
+                                <p>Name: </p>
+                                <p>Street: </p>
+                                <p>ZIP Code/City: </p>
+                                <p>Region: </p>
+                                <p>Country: </p>
+                            </div>
+                            <div class="contact-inf-values">
+                                <p class="js-name"></p>
+                                <p class="js-street"></p>
+                                <p class="js-zip-code"></p>
+                                <p class="js-region"></p>
+                                <p class="js-country"></p>
+                                <input type="text" class="contact-inf-input js-name-input">
+                                <input type="text" class="contact-inf-input js-street-input">
+                                <input type="text" class="contact-inf-input js-zip-code-input">
+                                <input type="text" class="contact-inf-input js-region-input">
+                                <input type="text" class="contact-inf-input js-country-input">
+                            </div>
+                        </div>
+                    </div>
+                    <!--end of shipping address block-->
+                    <!--start of line items block-->
+                    <div class="line-items">
+                        <div class="line-items-header">
+                            <p class="count-items">Line Items(4)</p>
+                            <div>
+                                <form class="porduct-search-form">
+                                    <input type="search" placeholder="поиск" class="product-search" />
+                                    <div class="btn js-table-search-btn"><i class="fa fa-search" aria-hidden="true"></i>
+                                    </div>
+                                </form>
+                                <i class="fa fa-plus add-product-btn" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                        <div class="no-products">
+                            <p class="no-produts-message">No products</p>
+                        </div>
+                        <div class="js-line-items-content">
+                            <table class="products-table">
+                                <tr class="table-header">
+                                    <th class="products-header">
+                                        <div class="table-titel">
+                                            <p>Product</p>
+                                            <div class="asc-product-sort">
+                                                <i class="fa fa-sort-alpha-asc sort" aria-hidden="true"></i>
+                                            </div>
+                                            <div class="desc-product-sort">
+                                                <i class="fa fa-sort-alpha-desc sort" aria-hidden="true"></i>
+                                            </div>
+                                            <div class="reset-product-sort">
+                                                <i class="fa fa-ban sort" aria-hidden="true"></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="table-titel">
+                                            <p>Unit Price</p>
+                                            <div class="asc-unit-price-sort">
+                                                <i class="fa fa-sort-amount-asc sort" aria-hidden="true"></i>
+                                            </div>
+                                            <div class="desc-unit-price-sort">
+                                                <i class="fa fa-sort-amount-desc sort" aria-hidden="true"></i>
+                                            </div>
+                                            <div class="reset-unit-price-sort">
+                                                <i class="fa fa-ban sort" aria-hidden="true"></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th class="header-quantity">
+                                        <div class="table-titel">
+                                            <p>Quantity</p>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="table-titel">
+                                            <p>Total</p>
+                                            <div class="asc-total-price-sort">
+                                                <i class="fa fa-sort-amount-asc sort" aria-hidden="true"></i>
+                                            </div>
+                                            <div class="desc-total-price-sort">
+                                                <i class="fa fa-sort-amount-desc sort" aria-hidden="true"></i>
+                                            </div>
+                                            <div class="reset-total-price-sort">
+                                                <i class="fa fa-ban sort" aria-hidden="true"></i>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th>
+                                    </th>
+                                </tr>
+                                <tbody class="table-content">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!--end of line items block-->
                 </div>
-                <!--end of processor information block-->
-                <!--start of shipping addres block-->
-                <div class="shipping-addres">
-                    <div class="heading">
-                        <p>Shipping Addres</p>
-                    </div>
-                    <!--contact information for mobile-->
-                    <div class="contact-inf-mobile">
-                        <div>
-                            <p>Name:</p>
-                            <p class="name"></p>
-                        </div>
-                        <div>
-                            <p>Street:</p>
-                            <p class="street"></p>
-                        </div>
-                        <div>
-                            <p>ZIP Code/City:</p>
-                            <p class="zip-code"></p>
-                        </div>
-                        <div>
-                            <p>Region:</p>
-                            <p class="region"></p>
-                        </div>
-                        <div>
-                            <p>Country:</p>
-                            <p class="country"></p>
-                        </div>
-                    </div>
-                    <!--contact information for desktop-->
-                    <div class="contact-inf">
-                        <div>
-                            <p>Name: </p>
-                            <p>Street: </p>
-                            <p>ZIP Code/City: </p>
-                            <p>Region: </p>
-                            <p>Country: </p>
-                        </div>
-                        <div>
-                            <p class="name"></p>
-                            <p class="street"></p>
-                            <p class="zip-code"></p>
-                            <p class="region"></p>
-                            <p class="country"></p>
-                        </div>
-                    </div>
-                </div>
-                <!--end of shipping addres block-->
-                <!--start of line items block-->
-                <div class="line-items">
-                    <div class="line-items-header">
-                        <p class="count-items">Line Items(4)</p>
-                        <form>
-                            <input type="search" placeholder="поиск" class="product-search" />
-                            <div class="btn table-search-btn"><i class="fa fa-search" aria-hidden="true"></i></div>
-                        </form>
-                    </div>
-                    <!--line items for mobile-->
-                    <div class="line-items-mobile">
-
-                    </div>
-                    <!--line items for desktop-->
-                    <table class="line-items-table">
-                        <tr>
-                            <th>
-                                <div>
-                                    <p>Product</p>
-                                    <div class="asc-product-sort">
-                                        <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i>
-                                    </div>
-                                    <div class="desc-product-sort">
-                                        <i class="fa fa-sort-alpha-desc" aria-hidden="true"></i>
-                                    </div>
-                                </div>
-
-                            </th>
-                            <th>
-                                <div>
-                                    <p>Unit Price</p>
-                                    <div class="asc-unit-price-sort">
-                                        <i class="fa fa-sort-amount-asc" aria-hidden="true"></i>
-                                    </div>
-                                    <div class="desc-unit-price-sort">
-                                        <i class="fa fa-sort-amount-desc" aria-hidden="true"></i>
-                                    </div>
-                                </div>
-
-                            </th>
-                            <th>
-                                <div>
-                                    <p>Quantity</p>
-                                </div>
-                            </th>
-                            <th>
-                                <div>
-                                    <p>Total</p>
-                                    <div class="asc-total-price-sort">
-                                        <i class="fa fa-sort-amount-asc" aria-hidden="true"></i>
-                                    </div>
-                                    <div class="desc-total-price-sort">
-                                        <i class="fa fa-sort-amount-desc" aria-hidden="true"></i>
-                                    </div>
-                                </div>
-                            </th>
-                        </tr>
-                        <tbody class="table-content">
-
-                        </tbody>
-                    </table>
-                </div>
-                <!--end of line items block-->
             </div>
             <!--footer for content-->
             <footer>
-                <i class="fa fa-envelope-o" aria-hidden="true"></i>
+                <i class="fa fa-trash-o delete-order-btn" aria-hidden="true"></i>
             </footer>
         </div>
-        </div>
-        <!--connect js file-->
-        <script src="./script.js"></script>
+    </div>
+    <!--connect js file-->
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=61854e24-7168-41f8-ae9b-2cbed899ff9a&lang=ru_RU"
+        type="text/javascript"></script>
+    <script type="module" src="./src/app.js"></script>
 </body>
 
 </html>
